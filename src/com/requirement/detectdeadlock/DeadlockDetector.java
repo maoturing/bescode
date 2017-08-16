@@ -1,4 +1,4 @@
-package com.deadlock3;
+package com.requirement.detectdeadlock;
 
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
@@ -32,11 +32,11 @@ public class DeadlockDetector {
 
 		@Override
 		public void run() {
-			long[] deadlockedThreads = DeadlockDetector.this.mBean.findDeadlockedThreads(); /// ²éÕÒÒòÎªµÈ´ı»ñµÃ¶ÔÏó¼àÊÓÆ÷»ò¿ÉÓµÓĞÍ¬²½Æ÷¶ø´¦ÓÚËÀËø×´Ì¬µÄÏß³ÌÑ­»·¡£·µ»ØÏß³ÌID
+			long[] deadlockedThreads = DeadlockDetector.this.mBean.findDeadlockedThreads(); /// æŸ¥æ‰¾å› ä¸ºç­‰å¾…è·å¾—å¯¹è±¡ç›‘è§†å™¨æˆ–å¯æ‹¥æœ‰åŒæ­¥å™¨è€Œå¤„äºæ­»é”çŠ¶æ€çš„çº¿ç¨‹å¾ªç¯ã€‚è¿”å›çº¿ç¨‹ID
 
-			ThreadInfo[] threadInfos = DeadlockDetector.this.mBean.getThreadInfo(deadlockedThreads, true, false); // ¸ù¾İËÀËøÏß³ÌidµÃµ½ËÀËøÏß³ÌĞÅÏ¢
+			ThreadInfo[] threadInfos = DeadlockDetector.this.mBean.getThreadInfo(deadlockedThreads, true, false); // æ ¹æ®æ­»é”çº¿ç¨‹idå¾—åˆ°æ­»é”çº¿ç¨‹ä¿¡æ¯
 
-			// Êä³öËÀËøĞÅÏ¢
+			// è¾“å‡ºæ­»é”ä¿¡æ¯
 			handleDeadLock(threadInfos);
 
 			Map map = new HashMap();
@@ -47,9 +47,9 @@ public class DeadlockDetector {
 				e.printStackTrace();
 			}
 			for (Object in : map.keySet()) {
-				// map.keySet()·µ»ØµÄÊÇËùÓĞkeyµÄÖµ
-				Integer gid = (Integer) map.get(in);// µÃµ½Ã¿¸ökey¶à¶ÔÓÃvalueµÄÖµ
-				System.out.println("Ïß³Ìid:" + in + "     ËÀËø" + gid);
+				// map.keySet()è¿”å›çš„æ˜¯æ‰€æœ‰keyçš„å€¼
+				Integer gid = (Integer) map.get(in);// å¾—åˆ°æ¯ä¸ªkeyå¤šå¯¹ç”¨valueçš„å€¼
+				System.out.println("çº¿ç¨‹id:" + in + "     æ­»é”" + gid);
 			}
 		}
 
@@ -59,7 +59,7 @@ public class DeadlockDetector {
 		this.schedule.schedule(this.deadlockCheck, this.period, this.unit);
 	}
 
-	// µÃµ½Ïß³ÌµÄËùÓĞĞÅÏ¢
+	// å¾—åˆ°çº¿ç¨‹çš„æ‰€æœ‰ä¿¡æ¯
 	public void handleDeadLock(ThreadInfo[] deadLockThreads) {
 		if (deadLockThreads != null) {
 			System.err.println("Deadlock detected!");
@@ -71,37 +71,37 @@ public class DeadlockDetector {
 						if (thread.getId() == threadInfo.getThreadId()) {
 							System.out.println();
 							System.out.println("id:" + threadInfo.getThreadId());
-							System.out.println("Ãû³Æ:" + threadInfo.getThreadName());
-							System.out.print("×´Ì¬£º" + threadInfo.getLockName());
-							System.out.println("ÉÏµÄ" + threadInfo.getThreadState());
-							System.out.println("ÓµÓĞÕß:" + threadInfo.getLockOwnerName());
-							System.out.println("×Ü×èÖ¹Êı:" + threadInfo.getBlockedCount());
-							System.out.println("×ÜµÈ´ıÊı:" + threadInfo.getWaitedCount());
-							System.out.println("×´Ì¬£º" + threadInfo.toString());
+							System.out.println("åç§°:" + threadInfo.getThreadName());
+							System.out.print("çŠ¶æ€ï¼š" + threadInfo.getLockName());
+							System.out.println("ä¸Šçš„" + threadInfo.getThreadState());
+							System.out.println("æ‹¥æœ‰è€…:" + threadInfo.getLockOwnerName());
+							System.out.println("æ€»é˜»æ­¢æ•°:" + threadInfo.getBlockedCount());
+							System.out.println("æ€»ç­‰å¾…æ•°:" + threadInfo.getWaitedCount());
+							System.out.println("çŠ¶æ€ï¼š" + threadInfo.toString());
 
 							String name = mBean.getThreadInfo(threadInfo.getLockOwnerId()).getLockName();
-							System.out.println("ÒÑËø¶¨:" + name);
+							System.out.println("å·²é”å®š:" + name);
 							int i = 0;
 
 							MonitorInfo[] monitors = threadInfo.getLockedMonitors();
 
 							for (StackTraceElement ste : thread.getStackTrace()) {
-								System.err.println("¶ÑÕ»Éî¶È:"+thread.getStackTrace().length);
-								System.err.println("¶ÑÕ»ĞÅÏ¢:"+ste.toString());
+								System.err.println("å †æ ˆæ·±åº¦:"+thread.getStackTrace().length);
+								System.err.println("å †æ ˆä¿¡æ¯:"+ste.toString());
 
-								System.out.println("Æ´½ÓµÄ¶ÑÕ»ĞÅÏ¢:"+ste.getClassName() + ste.getMethodName() + ste.getFileName()
+								System.out.println("æ‹¼æ¥çš„å †æ ˆä¿¡æ¯:"+ste.getClassName() + ste.getMethodName() + ste.getFileName()
 										+ ste.getLineNumber());
 								selectThread(threadInfo.getThreadId());
 								if (monitors != null) {
 									for (MonitorInfo mi : monitors) {
-										
-										//Èç¹û²»¼ÓÉî¶ÈÅĞ¶Ï,»á³öÏÖ¶àÓàµÄËø¶¨¶ÔÏó,Ô­Òò²»Ã÷
+
+										//å¦‚æœä¸åŠ æ·±åº¦åˆ¤æ–­,ä¼šå‡ºç°å¤šä½™çš„é”å®šå¯¹è±¡,åŸå› ä¸æ˜
 										if (mi.getLockedStackDepth() == 0) {
-											System.out.println("ÒÑËø¶¨1:"+mi.toString());
+											System.out.println("å·²é”å®š1:"+mi.toString());
 										}
 									}
 								} else {
-									System.out.println("monitorÎª¿Õ");
+									System.out.println("monitorä¸ºç©º");
 								}
 
 							}
@@ -113,12 +113,12 @@ public class DeadlockDetector {
 			}
 
 		} else {
-			System.out.println("Î´¼ì²âµ½ËÀËøÏß³Ì");
+			System.out.println("æœªæ£€æµ‹åˆ°æ­»é”çº¿ç¨‹");
 		}
 
 	}
 
-	// µÃµ½Ïß³ÌËø¶¨µÄ¶ÔÏó
+	// å¾—åˆ°çº¿ç¨‹é”å®šçš„å¯¹è±¡
 	public void selectThread(long selected) {
 		final long threadID = selected;
 		StringBuilder sb = new StringBuilder();
@@ -127,10 +127,10 @@ public class DeadlockDetector {
 		if (mBean.isObjectMonitorUsageSupported()) {
 			// VMs that support the monitor usage monitoring
 			// ThreadInfo[] infos = mBean.dumpAllThreads(true, false);
-			// //·µ»ØËùÓĞ»î¶¯Ïß³ÌµÄÏß³ÌĞÅÏ¢£¬²¢´øÓĞ¶ÑÕ»¸ú×ÙºÍÍ¬²½ĞÅÏ¢ Èç¹ûÎª true£¬Ôò×ª´¢ËùÓĞËø¶¨µÄ¼àÊÓÆ÷¡£
-			long[] deadlockedThreads = DeadlockDetector.this.mBean.findDeadlockedThreads(); /// ²éÕÒÒòÎªµÈ´ı»ñµÃ¶ÔÏó¼àÊÓÆ÷»ò¿ÉÓµÓĞÍ¬²½Æ÷¶ø´¦ÓÚËÀËø×´Ì¬µÄÏß³ÌÑ­»·¡£·µ»ØÏß³ÌID
+			// //è¿”å›æ‰€æœ‰æ´»åŠ¨çº¿ç¨‹çš„çº¿ç¨‹ä¿¡æ¯ï¼Œå¹¶å¸¦æœ‰å †æ ˆè·Ÿè¸ªå’ŒåŒæ­¥ä¿¡æ¯ å¦‚æœä¸º trueï¼Œåˆ™è½¬å‚¨æ‰€æœ‰é”å®šçš„ç›‘è§†å™¨ã€‚
+			long[] deadlockedThreads = DeadlockDetector.this.mBean.findDeadlockedThreads(); /// æŸ¥æ‰¾å› ä¸ºç­‰å¾…è·å¾—å¯¹è±¡ç›‘è§†å™¨æˆ–å¯æ‹¥æœ‰åŒæ­¥å™¨è€Œå¤„äºæ­»é”çŠ¶æ€çš„çº¿ç¨‹å¾ªç¯ã€‚è¿”å›çº¿ç¨‹ID
 
-			ThreadInfo[] infos = DeadlockDetector.this.mBean.getThreadInfo(deadlockedThreads, true, false); // ¸ù¾İËÀËøÏß³ÌidµÃµ½ËÀËøÏß³ÌĞÅÏ¢
+			ThreadInfo[] infos = DeadlockDetector.this.mBean.getThreadInfo(deadlockedThreads, true, false); // æ ¹æ®æ­»é”çº¿ç¨‹idå¾—åˆ°æ­»é”çº¿ç¨‹ä¿¡æ¯
 
 			for (ThreadInfo info : infos) {
 				if (info.getThreadId() == threadID) {
@@ -149,7 +149,7 @@ public class DeadlockDetector {
 			if (monitors != null) {
 				for (MonitorInfo mi : monitors) {
 					if (mi.getLockedStackDepth() == index) {
-						System.out.println("ÒÑËø¶¨2:" + mi.toString());
+						System.out.println("å·²é”å®š2:" + mi.toString());
 					}
 				}
 				index++;
@@ -158,7 +158,7 @@ public class DeadlockDetector {
 
 	}
 
-	// µÃµ½ËÀËø¸öÊı, keyÎªÏß³Ìid£¬valueÎªËùÊôµÄËÀËø×é
+	// å¾—åˆ°æ­»é”ä¸ªæ•°, keyä¸ºçº¿ç¨‹idï¼Œvalueä¸ºæ‰€å±çš„æ­»é”ç»„
 	public Map getDeadlockedThreadIds() throws IOException {
 
 		long[] ids = mBean.findDeadlockedThreads();
@@ -194,7 +194,7 @@ public class DeadlockDetector {
 					}
 				}
 
-				// µ±ËùÓĞÏß³Ì¾ù±»·ÃÎÊ¹ı,ÍË³öwhileÑ­»·
+				// å½“æ‰€æœ‰çº¿ç¨‹å‡è¢«è®¿é—®è¿‡,é€€å‡ºwhileå¾ªç¯
 				if (index < 0) {
 					// done
 					break;
@@ -218,7 +218,7 @@ public class DeadlockDetector {
 				}
 			}
 		}
-		// ·µ»Ø¶şÎ¬Êı×é£¬µÚÒ»Î¬¶ÈÊÇËÀËø·Ö×é£¬µÚ¶şÎ»¶¼ÊÇËÀËøÏÂµÄÏß³Ì£¬length¾Í¿É»ñµÃËÀËø¸öÊı
+		// è¿”å›äºŒç»´æ•°ç»„ï¼Œç¬¬ä¸€ç»´åº¦æ˜¯æ­»é”åˆ†ç»„ï¼Œç¬¬äºŒä½éƒ½æ˜¯æ­»é”ä¸‹çš„çº¿ç¨‹ï¼Œlengthå°±å¯è·å¾—æ­»é”ä¸ªæ•°
 		// return dcycles.toArray(new Long[0][0]);
 		return map;
 	}
